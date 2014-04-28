@@ -13,7 +13,7 @@ var moment = require('moment');
 var challengesEndpoint = process.env.CHALLENGES_ENDPOINT ||  "http://api.topcoder.com/v2/develop/challenges?pageSize=10";
 var leaderboardEndpoint = process.env.LEADERBOARD_ENDPOINT || "http://tc-leaderboard.herokuapp.com/demo";
 // filters the list of challenges to display by this regex -- currently returns all
-var challengeNameRegex = process.env.CHALLENGE_REGEX || / /;
+var regex = process.env.CHALLENGE_REGEX || "";
 
 var port = process.env.PORT || 3000; 
 var app = express();
@@ -41,6 +41,7 @@ var challenges = function(req, res, next) {
       res.on('end',function(){
           var challenges = JSON.parse(data).data;
           // remove the challenges that don't match the regex
+          var challengeNameRegex = new RegExp(regex);
           _.remove(challenges, function(c) { return challengeNameRegex.exec(c.challengeName) == null; });
           req.challenges = challenges;
           return next();
