@@ -33,20 +33,25 @@ app.use(app.router);
 
 // fetches a list of challenges as json and exposes it to the ejs
 var challenges = function(req, res, next) {
-  http.get(challengesEndpoint, function(res){
-      var data = '';
-      res.on('data', function (chunk){
-          data += chunk;
-      });
-      res.on('end',function(){
-          var challenges = JSON.parse(data).data;
-          // remove the challenges that don't match the regex
-          var challengeNameRegex = new RegExp(regex);
-          _.remove(challenges, function(c) { return challengeNameRegex.exec(c.challengeName) == null; });
-          req.challenges = challenges;
-          return next();
-      })
-  })
+  console.log("Sleeping for 20 seconds...");
+  var timeout = 20000; //sleep 10 seconds
+  setTimeout((function() {
+        console.log("Walking up....");
+        http.get(challengesEndpoint, function(res){
+            var data = '';
+            res.on('data', function (chunk){
+                data += chunk;
+            });
+            res.on('end',function(){
+                var challenges = JSON.parse(data).data;
+                // remove the challenges that don't match the regex
+                var challengeNameRegex = new RegExp(regex);
+                _.remove(challenges, function(c) { return challengeNameRegex.exec(c.challengeName) == null; });
+                req.challenges = challenges;
+                return next();
+            })
+        })        
+      }), timeout);  
 }
 
 // fetches a leaderboard as json and exposes it to the ejs
