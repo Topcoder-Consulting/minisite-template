@@ -302,22 +302,26 @@
                 <div class="content col-md-7 col-sm-7 col-xs-12">
                     <h2 class="title">[topcoder] Challenges & Leaders</h2>
                     <p>[topcoder] is the world’s largest platform for digital open innovation. We provide the platform and community of over 600,000 global members to accelerate the development of new digital products and services for our clients.</p>
-                    <table class="table">
-                    <tr>
-                        <th>Challenge</th>
-                        <th>Submissions Due</th>
-                        <th nowrap>Top Prize</th>
-                    </tr>
-                    <% challenges.forEach(function(c){ %>
-                    <tr>
-                        <td><a href="http://www.topcoder.com/challenge-details/<%= c.challengeId %>" class="white-link" target="_blank"><%= c.challengeName %></a>
-                        <br/><div class="small">Technologies: <%=: c.technologies | join %>&nbsp;&nbsp;&nbsp;Platforms: <%=: c.platforms | join %>
-                        <br/>Registrants: <%= c.numRegistrants %>&nbsp;&nbsp;&nbsp;Submissions: <%= c.numSubmissions %></div></td>
-                        <td><%- formatTime(c.submissionEndDate) %> (UTC)</td>
-                        <td>$<%=: c.prize | first %></td>
-                    </tr>
-                    <% }) %>                 
-                    </table>
+                    <% if (challenges.length > 0) { %>
+                        <table class="table">
+                        <tr>
+                            <th>Challenge</th>
+                            <th>Submissions Due</th>
+                            <th nowrap>Top Prize</th>
+                        </tr>
+                        <% challenges.forEach(function(c){ %>
+                        <tr>
+                            <td><a href="http://www.topcoder.com/challenge-details/<%= c.challengeId %>" class="white-link" target="_blank"><%= c.challengeName %></a>
+                            <br/><div class="small">Technologies: <%=: c.technologies | join %>&nbsp;&nbsp;&nbsp;Platforms: <%=: c.platforms | join %>
+                            <br/>Registrants: <%= c.numRegistrants %>&nbsp;&nbsp;&nbsp;Submissions: <%= c.numSubmissions %></div></td>
+                            <td><%- formatTime(c.submissionEndDate) %> (UTC)</td>
+                            <td>$<%=: c.prize | first %></td>
+                        </tr>
+                        <% }) %>                 
+                        </table>
+                    <% } else { %>
+                        <h1>Challenges will be starting shortly! Check back for your chance to compete, learn and win!</h1>
+                    <% } %>
                     <div style="padding-top:50px">
                     <img src="images/tcLogoSmall.png">
                     </div>

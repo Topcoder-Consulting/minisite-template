@@ -10,10 +10,10 @@ var _ = require("lodash");
 var moment = require('moment');
 
 // config settings for the minisite
-var challengesEndpoint = "http://api.topcoder.com/v2/develop/challenges?pageSize=20";
-var leaderboardEndpoint = 'http://tc-leaderboard.herokuapp.com/idolondemand-test';
-// filters the list of challenges to display by this regex -- currently contain a $
-var challengeNameRegex = /\$/;
+var challengesEndpoint = process.env.CHALLENGES_ENDPOINT ||  "http://api.topcoder.com/v2/develop/challenges?pageSize=10";
+var leaderboardEndpoint = process.env.LEADERBOARD_ENDPOINT || "http://tc-leaderboard.herokuapp.com/demo";
+// filters the list of challenges to display by this regex -- currently returns all
+var challengeNameRegex = process.end.CHALLENGE_REGEX || / /;
 
 var port = process.env.PORT || 3000; 
 var app = express();
