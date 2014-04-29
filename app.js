@@ -9,12 +9,15 @@ var debug = require('debug')('my-application');
 var _ = require("lodash");
 var moment = require('moment');
 var timeout = require('request-timeout');
+var NodeCache = require( "node-cache" );
 
 // config settings for the minisite
 var challengesEndpoint = process.env.CHALLENGES_ENDPOINT ||  "http://api.topcoder.com/v2/develop/challenges?pageSize=10";
 var leaderboardEndpoint = process.env.LEADERBOARD_ENDPOINT || "http://tc-leaderboard.herokuapp.com/demo";
 // filters the list of challenges to display by this regex -- currently returns all
 var regex = process.env.CHALLENGE_REGEX || "";
+// cache tc api calls
+var apiCache = new NodeCache( { stdTTL: 100, checkperiod: process.env.CACHE_EXPIRY || 120 } ); // expires in seconds
 
 var port = process.env.PORT || 3000; 
 var app = express();
@@ -43,20 +46,36 @@ var challenges = function(req, res, next) {
     return next();
   })  
 
-  http.get(challengesEndpoint, function(res){
-      var data = '';
-      res.on('data', function (chunk){
-          data += chunk;
-      });
-      res.on('end',function(){
-          var challenges = JSON.parse(data).data;
-          // remove the challenges that don't match the regex
-          var challengeNameRegex = new RegExp(regex);
-          _.remove(challenges, function(c) { return challengeNameRegex.exec(c.challengeName) == null; });
-          req.challenges = challenges;
-          return next();
-      })
-  })        
+  // if we find the value in the cache, return it
+  apiCache.get( "challenges", function( err, value ){
+
+    // return the challenges from the cache
+    if( !err && !_.isEmpty(value)){
+      req.challenges = value.challenges;
+      console.log('=== Returning challenges from cache');
+      return next();
+    // call the api
+    } else {
+      console.log('=== Fetching challenges from API');
+      http.get(challengesEndpoint, function(res){
+          var data = '';
+          res.on('data', function (chunk){
+              data += chunk;
+          });
+          res.on('end',function(){
+              var challenges = JSON.parse(data).data;
+              // remove the challenges that don't match the regex
+              var challengeNameRegex = new RegExp(regex);
+              _.remove(challenges, function(c) { return challengeNameRegex.exec(c.challengeName) == null; });
+              req.challenges = challenges;
+              // cache the results
+              apiCache.set( "challenges", challenges);
+              return next();
+          })
+      })   
+
+    }
+  });      
 }
 
 // fetches a leaderboard as json and exposes it to the ejs
