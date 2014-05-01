@@ -52,6 +52,8 @@ var challenges = function(req, res, next) {
     // return the challenges from the cache
     if( !err && !_.isEmpty(value)){
       req.challenges = value.challenges;
+      // make sure we gracefully handle an errors
+      if(typeof req.challenges == 'undefined') req.challenges = [];
       console.log('=== Returning challenges from cache');
       return next();
     // call the api
