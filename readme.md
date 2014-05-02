@@ -6,8 +6,8 @@ The original HTML templates are included in case you need to use them.
 
 ## Setup
 
-    // clone the repo
-    // switch to the repo
+    git clone git@github.com:cloudspokes/minisite-template.git mynewminisite
+    cd mynewminisite
     npm install
     node app.js
     // open http://localhost:3000
@@ -26,4 +26,4 @@ By default the results of the API call are cached for 2 minutes. I would recomme
 
 # Leaderboard
 
-The endpoint for the leaderboard api can either be set in app.js or as a heroku env variable. You'll want to create a new leaderboard for the new community before you get started. You can use the demo leaderbaord from tc-leaderbaord for testing if you'd like for testing. The instructions for creating a new leadboard are on the tc-leaderboard readme. It's simple.
+The endpoint for the leaderboard api can either be set in app.js or as a heroku env variable. [See the tc-leaderboard repo page](https://github.com/cloudspokes/tc-leaderboard) for more info. You'll want to create a new leaderboard for the new community before you get started. You can use the demo leaderbaord from tc-leaderbaord for testing if you'd like for testing. The instructions for creating a new leadboard are on the tc-leaderboard readme. It's simple.
