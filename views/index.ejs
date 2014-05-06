@@ -310,16 +310,16 @@
                         <table class="table">
                         <tr>
                             <th>Challenge</th>
-                            <th>Submissions Due</th>
+                            <th>Deadline</th>
                             <th nowrap>Top Prize</th>
                         </tr>
                         <% challenges.forEach(function(c){ %>
                         <tr>
-                            <td><a href="http://www.topcoder.com/challenge-details/<%= c.challengeId %>" class="white-link" target="_blank"><%= c.challengeName %></a>
-                            <br/><div class="small">Technologies: <%=: c.technologies | join %>&nbsp;&nbsp;&nbsp;Platforms: <%=: c.platforms | join %>
-                            <br/>Registrants: <%= c.numRegistrants %>&nbsp;&nbsp;&nbsp;Submissions: <%= c.numSubmissions %></div></td>
-                            <td><%- formatTime(c.submissionEndDate) %> (UTC)</td>
-                            <td>$<%=: c.prize | first %></td>
+                            <td><a href="http://www.topcoder.com/challenge-details/<%= c._source.challengeId %>?type=<%= c._type%>" class="white-link" target="_blank"><%= c._source.challengeName %></a>
+                            <br/><div class="small">Technologies: <%=: c._source.technologies | join %>&nbsp;&nbsp;&nbsp;Platforms: <%=: c._source.platforms | join %>
+                            <br/>Registrants: <%= c._source.numRegistrants %>&nbsp;&nbsp;&nbsp;Submissions: <%= c._source.numSubmissions %></div></td>
+                            <td><%- formatTime(c._source.submissionEndDate) %> (UTC)</td>
+                            <td>$<%=: c._source.prize | first %></td>
                         </tr>
                         <% }) %>                 
                         </table>

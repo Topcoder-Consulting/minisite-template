@@ -7,17 +7,12 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var debug = require('debug')('my-application');
 var _ = require("lodash");
+var request = require('request');
 var moment = require('moment');
-var timeout = require('request-timeout');
-var NodeCache = require( "node-cache" );
 
 // config settings for the minisite
-var challengesEndpoint = process.env.CHALLENGES_ENDPOINT ||  "http://api.topcoder.com/v2/develop/challenges?pageSize=10";
+var challengesEndpoint = process.env.CHALLENGES_ENDPOINT ||  "http://tc-search.herokuapp.com/challenges/search?q=challengeName:IDOL";
 var leaderboardEndpoint = process.env.LEADERBOARD_ENDPOINT || "http://tc-leaderboard.herokuapp.com/demo";
-// filters the list of challenges to display by this regex -- currently returns all
-var regex = process.env.CHALLENGE_REGEX || "";
-// cache tc api calls
-var apiCache = new NodeCache( { stdTTL: 100, checkperiod: process.env.CACHE_EXPIRY || 120 } ); // expires in seconds
 
 var port = process.env.PORT || 3000; 
 var app = express();
@@ -35,49 +30,14 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(app.router);
 
-// fetches a list of challenges as json and exposes it to the ejs
 var challenges = function(req, res, next) {
-  // check for timeouts
-  timeout(req, res, 10)
-  // if request times out, return empty array
-  req.on('timeout', function() {
-    console.log('****** Challenge request timed out ******');
-    req.challenges = [];
-    return next();
-  })  
-
-  // if we find the value in the cache, return it
-  apiCache.get( "challenges", function( err, value ){
-
-    // return the challenges from the cache
-    if( !err && !_.isEmpty(value)){
-      req.challenges = value.challenges;
-      // make sure we gracefully handle an errors
-      if(typeof req.challenges == 'undefined') req.challenges = [];
-      console.log('=== Returning challenges from cache');
+  request(challengesEndpoint, function (error, response, body) {
+    if (!error && response.statusCode == 200) {
+      req.challenges = JSON.parse(body);
       return next();
-    // call the api
-    } else {
-      console.log('=== Fetching challenges from API');
-      http.get(challengesEndpoint, function(res){
-          var data = '';
-          res.on('data', function (chunk){
-              data += chunk;
-          });
-          res.on('end',function(){
-              var challenges = JSON.parse(data).data;
-              // remove the challenges that don't match the regex
-              var challengeNameRegex = new RegExp(regex);
-              _.remove(challenges, function(c) { return challengeNameRegex.exec(c.challengeName) == null; });
-              req.challenges = challenges;
-              // cache the results
-              apiCache.set( "challenges", challenges);
-              return next();
-          })
-      })   
-
     }
-  });      
+    // renders the error
+  });
 }
 
 // fetches a leaderboard as json and exposes it to the ejs
