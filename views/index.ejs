@@ -315,9 +315,15 @@
                         </tr>
                         <% challenges.forEach(function(c){ %>
                         <tr>
-                            <td><a href="http://www.topcoder.com/challenge-details/<%= c._source.challengeId %>?type=<%= c._type%>" class="white-link" target="_blank"><%= c._source.challengeName %></a>
-                            <br/><div class="small">Technologies: <%=: c._source.technologies | join %>&nbsp;&nbsp;&nbsp;Platforms: <%=: c._source.platforms | join %>
-                            <br/>Registrants: <%= c._source.numRegistrants %>&nbsp;&nbsp;&nbsp;Submissions: <%= c._source.numSubmissions %></div></td>
+                            <td><a href="http://www.topcoder.com/challenge-details/<%= c._source.challengeId %>?type=<%= c._type%>" class="white-link" target="_blank"><%= c._source.challengeName %></a><span class="small">
+                            <!-- api return an empty string element if no platform/technology for design challenges -->
+                            <% if (c._source.technologies.length > 0) { %>
+                                <% if (c._source.technologies[0] != "" ) { %><br/>Technologies: <%=: c._source.technologies | join %><% } %>
+                            <% } %>
+                            <% if (c._source.platforms.length > 0 ) { %>
+                                <% if (c._source.platforms[0] != "" ) { %><br/>Platforms: <%=: c._source.platforms | join %><% } %>
+                            <% } %>
+                            <br/>Registrants: <%= c._source.numRegistrants %>&nbsp;&nbsp;&nbsp;Submissions: <%= c._source.numSubmissions %></span></td>
                             <td><%- formatTime(c._source.submissionEndDate) %> (UTC)</td>
                             <td>$<%=: c._source.prize | first %></td>
                         </tr>
