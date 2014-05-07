@@ -9,6 +9,7 @@ var debug = require('debug')('my-application');
 var _ = require("lodash");
 var request = require('request');
 var moment = require('moment');
+var Feed = require('feed');
 
 // config settings for the minisite
 var challengesEndpoint = process.env.CHALLENGES_ENDPOINT ||  "http://tc-search.herokuapp.com/challenges/search?q=challengeName:IDOL";
@@ -30,29 +31,28 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(app.router);
 
+// fetches a list of challenges as json and exposes it to the ejs
 var challenges = function(req, res, next) {
   request(challengesEndpoint, function (error, response, body) {
     if (!error && response.statusCode == 200) {
       req.challenges = JSON.parse(body);
-      return next();
+    } else {
+      req.challenges = [];
     }
-    // renders the error
+    return next();
   });
 }
 
 // fetches a leaderboard as json and exposes it to the ejs
 var leaderboard = function(req, res, next) {
-  http.get(leaderboardEndpoint, function(res){
-      var data = '';
-      res.on('data', function (chunk){
-          data += chunk;
-      });
-      res.on('end',function(){
-          var leaderboard = JSON.parse(data);
-          req.leaderboard = leaderboard;
-          return next();
-      })
-  })
+  request(leaderboardEndpoint, function (error, response, body) {
+    if (!error && response.statusCode == 200) {
+      req.leaderboard = JSON.parse(body);
+    } else {
+      req.leaderboard = [];
+    }
+    return next();
+  });
 }
 
 app.get('/', challenges, leaderboard, function(req, res){
@@ -60,6 +60,42 @@ app.get('/', challenges, leaderboard, function(req, res){
     challenges: req.challenges,
     leaderboard: req.leaderboard
   });
+});
+
+app.get('/challenges/rss', challenges, leaderboard, function(req, res){
+
+  var feed = new Feed({
+      title:          'Community Challenges',
+      description:    'Open challenges for this community',
+      link:           'http://idolondemand.topcoder.com/',
+      image:          'http://example.com/logo.png',
+      copyright:      'Copyright © 2014 Appirio. All rights reserved',
+      author: {
+          name:       'topcoder',
+          email:      'support@topcoder.com',
+          link:       'http://www.topcoder.com'
+      }
+  });
+
+  var challenges = [];
+  request(challengesEndpoint, function (error, response, body) {
+    if (!error && response.statusCode == 200) {
+      challenges = JSON.parse(body);
+      _(challenges).forEach(function(c) { 
+
+        feed.addItem({
+            title:          c._source.challengeName,
+            link:           "http://www.topcoder.com/challenge-details/"+c._source.challengeId+"?type="+c._type,
+            description:    "[topcoder] community "+c._type+" challenge: " + c._source.challengeName
+        });
+
+      });
+    }
+
+    res.send(feed.render('rss-2.0'));
+
+  });  
+
 });
 
 /// catch 404 and forwarding to error handler
