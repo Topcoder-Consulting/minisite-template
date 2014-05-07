@@ -9,11 +9,13 @@ var debug = require('debug')('my-application');
 var _ = require("lodash");
 var request = require('request');
 var moment = require('moment');
-var Feed = require('feed');
+var RSS = require('rss');
+var url = require('url') ;
 
 // config settings for the minisite
 var challengesEndpoint = process.env.CHALLENGES_ENDPOINT ||  "http://tc-search.herokuapp.com/challenges/search?q=challengeName:IDOL";
 var leaderboardEndpoint = process.env.LEADERBOARD_ENDPOINT || "http://tc-leaderboard.herokuapp.com/demo";
+var communityName = process.env.COMMUNITY_NAME || "Community Template";
 
 var port = process.env.PORT || 3000; 
 var app = express();
@@ -64,17 +66,15 @@ app.get('/', challenges, leaderboard, function(req, res){
 
 app.get('/challenges/rss', challenges, leaderboard, function(req, res){
 
-  var feed = new Feed({
-      title:          'Community Challenges',
-      description:    'Open challenges for this community',
-      link:           'http://idolondemand.topcoder.com/',
-      image:          'http://example.com/logo.png',
-      copyright:      'Copyright © 2014 Appirio. All rights reserved',
-      author: {
-          name:       'topcoder',
-          email:      'support@topcoder.com',
-          link:       'http://www.topcoder.com'
-      }
+  var feed = new RSS({
+      title: communityName + ' Community Challenges',
+      description: 'Open challenges for the ' + communityName + ' community.',
+      feed_url: 'http://' + req.headers.host + '/challenges/rss',
+      site_url: 'http://' + req.headers.host,
+      image_url: 'http://www.topcoder.com/i/logo.png',
+      author: '[topcoder]',
+      copyright: '2014 Appirio',
+      ttl: '60'
   });
 
   var challenges = [];
@@ -83,18 +83,18 @@ app.get('/challenges/rss', challenges, leaderboard, function(req, res){
       challenges = JSON.parse(body);
       _(challenges).forEach(function(c) { 
 
-        feed.addItem({
-            title:          c._source.challengeName,
-            link:           "http://www.topcoder.com/challenge-details/"+c._source.challengeId+"?type="+c._type,
-            description:    "[topcoder] community "+c._type+" challenge: " + c._source.challengeName
-        });
+        feed.item({
+            title:  c._source.challengeName,
+            description: communityName + ' community '+c._type+' challenge: ' + c._source.challengeName,
+            url:  "http://www.topcoder.com/challenge-details/"+c._source.challengeId+"?type="+c._type,
+            date: c._source.postingDate
+        });         
 
       });
     }
-
-    res.send(feed.render('rss-2.0'));
-
-  });  
+    res.set('Content-Type', 'text/xml');
+    res.send(feed.xml());
+  });    
 
 });
 

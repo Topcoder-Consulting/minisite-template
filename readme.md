@@ -16,7 +16,7 @@ The original HTML templates are included in case you need to use them.
 
 index.ejs - contains all of the code and text for the site. Feel free to change as needed. There is a section to display a list of challenge from the tc-search api and a leaderboard from the tc-leaderboard api.
 
-app.js - the node application that runs the site. It has a couple of settings near the top that defines the URLs for the challenges search endpoint and the leaderboard endpoint.
+app.js - the node application that runs the site. It has a couple of settings near the top that defines the URLs for the challenges search endpoint,  the leaderboard endpoint and the community display name.
 
 # Challenges List
 
