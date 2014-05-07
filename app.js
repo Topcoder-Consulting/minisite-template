@@ -10,7 +10,6 @@ var _ = require("lodash");
 var request = require('request');
 var moment = require('moment');
 var RSS = require('rss');
-var url = require('url') ;
 
 // config settings for the minisite
 var challengesEndpoint = process.env.CHALLENGES_ENDPOINT ||  "http://tc-search.herokuapp.com/challenges/search?q=challengeName:IDOL";
