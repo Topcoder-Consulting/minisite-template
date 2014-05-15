@@ -315,6 +315,7 @@
                         </tr>
                         <% challenges.forEach(function(c){ %>
                             <% if (c._source.currentStatus != 'Completed') { %>
+                                <% if (c._type == 'development') { c._type = 'develop' } %>
                                 <tr>
                                     <td><a href="http://www.topcoder.com/challenge-details/<%= c._source.challengeId %>?type=<%= c._type%>" class="white-link" target="_blank"><%= c._source.challengeName %></a><span class="small">
                                     <!-- api return an empty string element if no platform/technology for design challenges -->
