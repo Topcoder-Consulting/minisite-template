@@ -327,7 +327,7 @@
                                     <% } %>
                                     <br/>Registrants: <%= c._source.numRegistrants %>&nbsp;&nbsp;&nbsp;Submissions: <%= c._source.numSubmissions %></span></td>
                                     <td><%- formatTime(c._source.submissionEndDate) %> (UTC)</td>
-                                    <td>$<%=: c._source.prize | first %></td>
+                                    <td><% if (c._source.prize.length > 0) { %>$<%=: c._source.prize | first %><% } %></td>
                                 </tr>
                             <% } %>
                         <% }) %>                 
