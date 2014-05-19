@@ -359,13 +359,13 @@
                       <% var right = leaderboard[i+1] %>
                       <div class="row">
                           <div class="member col-md-6 text-center">
-                              <a href="http://www.topcoder.com/member-profile/<%= left.handle %>" target="_blank"><img class="img-circle" src="<%= left.pic %>" alt="<%= left.handle %>" /></a>
+                              <a href="http://www.topcoder.com/member-profile/<%= left.handle %>" target="_blank"><img class="img-circle" src="<%= left.pic %>" alt="<%= left.handle %>"  width="125"/></a>
                               <p class="name"><%= left.handle %></p>
                               <p class="title"><%- ordinal(left.rank) %> with <%= left.score %> pts</p>
                           </div><!--//member-->
                           <% if(typeof right != 'undefined') { %>
                           <div class="member col-md-6 text-center">
-                              <a href="http://www.topcoder.com/member-profile/<%= right.handle %>" target="_blank"><img class="img-circle" src="<%= right.pic %>" alt="<%= right.handle %>" /></a>
+                              <a href="http://www.topcoder.com/member-profile/<%= right.handle %>" target="_blank"><img class="img-circle" src="<%= right.pic %>" alt="<%= right.handle %>" width="125" /></a>
                               <p class="name"><%= right.handle %></p>
                               <p class="title"><%- ordinal(right.rank) %> with <%= right.score %>  pts</p>
                           </div><!--//member-->
