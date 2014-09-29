@@ -1,39 +1,27 @@
-# [topcoder] Search API
+# Minisite Template
 
-This is running against live, production data in Elasticsearch coming from the API. A task runs every 10 minutes that calls the [topcoder API](http://docs.tcapi.apiary.io/) and loads development and design challenges into Elasticsearch.
+A single page node and ejs application that can be cloned to make a new community minisite. You can see a demo of the site at [http://minisite-template.herokuapp.com](http://minisite-template.herokuapp.com). The page displays a list of challenges from the search API plus a leaderboard for the community. Both are configurable.
 
-By default, all challenge type data is searchable together unless you specify otherwise. For instance, if you [search for "IDOL"](http://localhost:9393/challenges/search?q=IDOL) it will return all design and development challenges with the keyword "IDOL" anywhere in the challenge. If you want to only search specific types of challenges you can do so (see bottom of page) and return results for the specified type of challenge.
+The original HTML templates are included in case you need to use them.
 
-Essentially you can search by almost any key in the JSON document by substituting it below in the query param. The values for the query parameter (q) must be encoded.
+## Setup
 
-## Simple Searches
+    git clone git@github.com:cloudspokes/minisite-template.git mynewminisite
+    cd mynewminisite
+    npm install
+    node app.js
+    // open http://localhost:3000
 
-1. [/challenges/search?q=assembly](/challenges/search?q=assembly) - Keyword search across all fields (anywhere!) in the challenge
-2. [/challenges/search?q=challengeName:IDOL](/challenges/search?q=challengeName:IDOL) - Keyword search in challenge name
-3. [/challenges/search?q=challengeName:TCO*](/challenges/search?q=challengeName:TCO*) - Keyword search with wildcards(*)
-4. [/challenges/search?q=challengeId:30042021](/challenges/search?q=challengeId:30042021) - Return challenge by ID
-5. [/challenges/search?q=challengeType:First2Finish](/challenges/search?q=challengeType:First2Finish) - Return all "First2Finish' challenges
-6. [/challenges/search?q=technologies:javascript](/challenges/search?q=technologies:javascript) - Search for all challenges with 'Javascript' as one of the platforms
-7. [/challenges/search?q=technologies:Apex,HTML](/challenges/search?q=technologies:Apex,HTML) - Search for all challenges with 'Apex' and 'HTML' as one of the technologies
-8. [/challenges/search?q=numSubmissions:>20](/challenges/search?q=numSubmissions:>20) - Search for all challenges with more than 20 submissions
-9. [/challenges/search?q=currentStatus:Active](/challenges/search?q=currentStatus:Active) - Return all active challenges
-10. [/challenges/search?q=submissionEndDate%3A%3E2014%2F05%2F01](/challenges/search?q=submissionEndDate%3A%3E2014%2F05%2F01) - All challenges with the submission end date later than May 1, 2014 (e.g., q=submissionEndDate:>2014/05/01)
+## Configuration
 
-## Complex Searches
+index.ejs - contains all of the code and text for the site. Feel free to change as needed. There is a section to display a list of challenge from the tc-search api and a leaderboard from the tc-leaderboard api.
 
-If you want to search by more than one parameter, make sure you encode the q parameter. See [this Elasticsearch help page](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current//query-dsl-query-string-query.html#query-string-syntax) for more information about complex query strings.
+app.js - the node application that runs the site. It has a couple of settings near the top that defines the URLs for the challenges search endpoint,  the leaderboard endpoint and the community display name.
 
-1. [/challenges/search?q=challengeName%3AIDOL%20-currentStatus%3ACompleted](/challenges/search?q=challengeName%3AIDOL%20-currentStatus%3ACompleted) - All challenges with "IDOL" in the challenge name that are not 'Completed' status (e.g, q=challengeName:IDOL -currentStatus:Completed)
-2. [/challenges/search?q=challengeType%3DAssembly%20platforms%3AHTML%20-technologies%3APHP](/challenges/search?q=challengeType%3DAssembly%20platforms%3AHTML%20-technologies%3APHP) - All 'Assembly" challenge type for HTML platform but **not** PHP technology (e.g, q=challengeType=Assembly platforms:HTML -technologies:PHP)
-3. [/challenges/search?q=challengeType%3Acode%20numRegistrants%3A>20](/challenges/search?q=challengeType%3Acode%20numRegistrants%3A>20) - All 'code' challenges with more than 20 registrants (e.g, q=challengeType:code numRegistrants:>20)
-3. [/challenges/search?q=challengeType%3Acode%20numRegistrants%3A>20](/challenges/search?q=challengeType%3Acode%20numRegistrants%3A>20) - All 'code' challenges with 5-10 registrants (e.g, q=challengeType:code numRegistrants:>20)
+# Challenges List
 
-## Searching by Specific Challenge Type
+The endpoint for the tc-search api can either be set in app.js or as a heroku env variable. If no matching challenges are found, the page will display some text telling them to check back.
 
-Virtually all of the above API calls work when specifying the type of challenge to return:
+# Leaderboard
 
-1. [/challenges/search?q=challengeName:IDOL](/challenges/search?q=challengeName:IDOL) - Returns **any** challenge with "IDOL" in the challenge name
-2. [/challenges/design/search?q=challengeName:IDOL](/challenges/design/search?q=challengeName:IDOL) - Returns **design** challenges with "IDOL" in the challenge name
-3. [/challenges/development/search?q=challengeName:IDOL](/challenges/development/search?q=challengeName:IDOL) - Returns **development** challenges with "IDOL" in the challenge name
-
-
+The endpoint for the leaderboard api can either be set in app.js or as a heroku env variable. [See the tc-leaderboard repo page](https://github.com/cloudspokes/tc-leaderboard) for more info. You'll want to create a new leaderboard for the new community before you get started. You can use the demo leaderbaord from tc-leaderbaord for testing if you'd like for testing. The instructions for creating a new leadboard are on the tc-leaderboard readme. It's simple.
