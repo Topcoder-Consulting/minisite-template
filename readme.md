@@ -1,6 +1,6 @@
 # Minisite Template
 
-A single page node and ejs application that can be cloned to make a new community minisite. You can see a demo of the site at [http://minisite-template.herokuapp.com](http://minisite-template.herokuapp.com). The page displays a list of challenges from the search API plus a leaderboard for the community. Both are configurable.
+A single page node application that can be cloned to make a new community minisite. You can see a demo of the site at [http://minisite-template.herokuapp.com](http://minisite-template.herokuapp.com). The page displays a list of challenges from the search API plus a leaderboard for the community. Both are configurable. You can also filter challenges to display only those of a particular status.
 
 The original HTML templates are included in case you need to use them.
 
@@ -14,9 +14,13 @@ The original HTML templates are included in case you need to use them.
 
 ## Configuration
 
-index.ejs - contains all of the code and text for the site. Feel free to change as needed. There is a section to display a list of challenge from the tc-search api and a leaderboard from the tc-leaderboard api.
+app.js - the node application that runs the site. It has a couple of settings near the top that defines the URLs for the challenges search endpoint, the challenge statuses to display, the leaderboard endpoint and the community display name.
 
-app.js - the node application that runs the site. It has a couple of settings near the top that defines the URLs for the challenges search endpoint,  the leaderboard endpoint and the community display name.
+views/layouts/main.handlebars - the main layout for the app.
+
+views/index.handlebars - the single page for the application. Simply contains the partials that you want to display on the page (challenges, faqs, etc.)
+
+views/partials - the individual partials that contain the views for different sections of the site.
 
 # Challenges List
 
