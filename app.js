@@ -95,6 +95,7 @@ var leaderboard = function(req, res, next) {
 
 app.get('/', challenges, leaderboard, function(req, res){
   res.render('index', {
+    communityName: communityName,
     challenges: req.challenges,
     leaderboard: req.leaderboard
   });
